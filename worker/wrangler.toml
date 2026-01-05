@@ -1,0 +1,12 @@
+name = "ncpa-notes-api"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "ncpa-notes"
+database_id = "" # This will be filled after creating the database
+
+# CORS settings
+[env.production]

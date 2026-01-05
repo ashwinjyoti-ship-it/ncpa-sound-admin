@@ -2,6 +2,11 @@
 let notes = [];
 let currentEditIndex = -1;
 
+// API Configuration
+// TODO: Replace with your Cloudflare Worker URL after deployment
+const API_URL = 'YOUR_WORKER_URL_HERE'; // e.g., 'https://ncpa-notes-api.your-subdomain.workers.dev'
+const USE_API = API_URL !== 'YOUR_WORKER_URL_HERE'; // Automatically enable API when configured
+
 // Load notes from localStorage on page load
 document.addEventListener('DOMContentLoaded', () => {
     loadNotes();
@@ -273,7 +278,26 @@ document.getElementById('fullscreenBtn').addEventListener('click', () => {
 });
 
 // Notes & Tasks Functionality
-function loadNotes() {
+async function loadNotes() {
+    if (USE_API) {
+        try {
+            const response = await fetch(`${API_URL}/notes`);
+            if (response.ok) {
+                notes = await response.json();
+                // Convert completed from integer to boolean
+                notes = notes.map(note => ({
+                    ...note,
+                    completed: Boolean(note.completed)
+                }));
+                renderNotes();
+                return;
+            }
+        } catch (error) {
+            console.error('Failed to load notes from API, falling back to localStorage:', error);
+        }
+    }
+
+    // Fallback to localStorage
     const savedNotes = localStorage.getItem('notes');
     if (savedNotes) {
         notes = JSON.parse(savedNotes);
@@ -283,9 +307,14 @@ function loadNotes() {
     }
 }
 
-function saveNotes() {
-    localStorage.setItem('notes', JSON.stringify(notes));
-    renderNotes();
+async function saveNotes() {
+    if (USE_API) {
+        // API saves are handled individually in other functions
+        renderNotes();
+    } else {
+        localStorage.setItem('notes', JSON.stringify(notes));
+        renderNotes();
+    }
 }
 
 function renderNotes() {
@@ -328,13 +357,42 @@ function renderEmptyState() {
     `;
 }
 
-function toggleNoteComplete(index) {
+async function toggleNoteComplete(index) {
     notes[index].completed = !notes[index].completed;
+
+    if (USE_API && notes[index].id) {
+        try {
+            const response = await fetch(`${API_URL}/notes/${notes[index].id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(notes[index])
+            });
+            if (!response.ok) throw new Error('Failed to update note');
+        } catch (error) {
+            console.error('Failed to update note:', error);
+            notes[index].completed = !notes[index].completed; // Revert on error
+        }
+    }
+
     saveNotes();
 }
 
-function deleteNote(index) {
+async function deleteNote(index) {
     if (confirm('Are you sure you want to delete this note?')) {
+        const noteId = notes[index].id;
+
+        if (USE_API && noteId) {
+            try {
+                const response = await fetch(`${API_URL}/notes/${noteId}`, {
+                    method: 'DELETE'
+                });
+                if (!response.ok) throw new Error('Failed to delete note');
+            } catch (error) {
+                console.error('Failed to delete note:', error);
+                return; // Don't remove from local array if API call fails
+            }
+        }
+
         notes.splice(index, 1);
         saveNotes();
     }
@@ -444,7 +502,7 @@ function closeNoteModal() {
     }
 }
 
-function saveNote() {
+async function saveNote() {
     const title = document.getElementById('noteTitle').value.trim();
     const content = document.getElementById('noteContent').value.trim();
 
@@ -462,13 +520,46 @@ function saveNote() {
 
     if (currentEditIndex >= 0) {
         // Update existing note
+        const existingNote = notes[currentEditIndex];
         notes[currentEditIndex] = {
-            ...notes[currentEditIndex],
+            ...existingNote,
             title,
             content
         };
+
+        if (USE_API && existingNote.id) {
+            try {
+                const response = await fetch(`${API_URL}/notes/${existingNote.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(notes[currentEditIndex])
+                });
+                if (!response.ok) throw new Error('Failed to update note');
+            } catch (error) {
+                console.error('Failed to update note:', error);
+                alert('Failed to save note. Please try again.');
+                return;
+            }
+        }
     } else {
         // Add new note
+        if (USE_API) {
+            try {
+                const response = await fetch(`${API_URL}/notes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, content })
+                });
+                if (!response.ok) throw new Error('Failed to create note');
+
+                const result = await response.json();
+                note.id = result.id;
+            } catch (error) {
+                console.error('Failed to create note:', error);
+                alert('Failed to save note. Please try again.');
+                return;
+            }
+        }
         notes.unshift(note);
     }
 

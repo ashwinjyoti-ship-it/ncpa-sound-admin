@@ -93,6 +93,29 @@ function formatSiteName(name) {
 
 // Detect iframe loading errors
 function detectIframeErrors() {
+    // Check NCPA Sound iframe
+    const ncpaIframe = document.getElementById('ncpa-sound-iframe');
+    const ncpaError = document.getElementById('ncpa-sound-error');
+
+    if (ncpaIframe) {
+        ncpaIframe.addEventListener('error', () => {
+            ncpaIframe.style.display = 'none';
+            ncpaError.style.display = 'flex';
+        });
+
+        setTimeout(() => {
+            try {
+                const iframeDoc = ncpaIframe.contentDocument || ncpaIframe.contentWindow.document;
+                if (!iframeDoc) {
+                    ncpaIframe.style.display = 'none';
+                    ncpaError.style.display = 'flex';
+                }
+            } catch (e) {
+                console.log('Cross-origin iframe detected for NCPA Sound');
+            }
+        }, 3000);
+    }
+
     // Check Staggered Offs iframe
     const staggeredIframe = document.getElementById('staggered-iframe');
     const staggeredError = document.getElementById('staggered-error');

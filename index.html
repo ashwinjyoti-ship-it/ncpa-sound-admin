@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCPA Sound Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>NCPA Sound Admin</h1>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search tabs... (Ctrl+K)" class="search-input">
+                <span class="search-icon">🔍</span>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav">
+            <button class="tab-button active" data-tab="ncpa-sound" data-keywords="ncpa sound main site pages">
+                NCPA Sound
+            </button>
+            <button class="tab-button" data-tab="staggered-offs" data-keywords="staggered offs schedule replit">
+                Staggered Offs
+            </button>
+            <button class="tab-button" data-tab="soundhire-quotes" data-keywords="soundhire quotes invoices">
+                SoundHire Quotes
+            </button>
+            <button class="tab-button" data-tab="outlook" data-keywords="outlook email mail inbox">
+                Outlook Mail
+            </button>
+            <button class="tab-button" data-tab="notes" data-keywords="notes tasks todo list">
+                Notes & Tasks
+            </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <main class="content">
+            <!-- NCPA Sound Tab -->
+            <div class="tab-content active" id="ncpa-sound">
+                <iframe src="https://ncpa-sound.pages.dev/" frameborder="0" class="iframe-content"></iframe>
+            </div>
+
+            <!-- Staggered Offs Tab -->
+            <div class="tab-content" id="staggered-offs">
+                <iframe src="https://staggered-offs.replit.app/" frameborder="0" class="iframe-content"></iframe>
+            </div>
+
+            <!-- SoundHire Quotes Tab -->
+            <div class="tab-content" id="soundhire-quotes">
+                <iframe src="https://soundhire-quotes.pages.dev/" frameborder="0" class="iframe-content"></iframe>
+            </div>
+
+            <!-- Outlook Mail Tab -->
+            <div class="tab-content" id="outlook">
+                <iframe src="https://outlook.office.com/mail/" frameborder="0" class="iframe-content"></iframe>
+            </div>
+
+            <!-- Notes & Tasks Tab -->
+            <div class="tab-content" id="notes">
+                <div class="notes-container">
+                    <div class="notes-header">
+                        <h2>Notes & Tasks</h2>
+                        <button class="btn-add" id="addNoteBtn">+ Add Note</button>
+                    </div>
+                    <div class="notes-list" id="notesList">
+                        <!-- Notes will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer with Quick Actions -->
+        <footer class="footer">
+            <div class="quick-actions">
+                <button class="quick-btn" id="toggleTheme">🌓 Theme</button>
+                <button class="quick-btn" id="fullscreenBtn">⛶ Fullscreen</button>
+                <span class="footer-info">Dashboard v1.0 | Press Ctrl+K to search</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

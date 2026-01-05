@@ -270,6 +270,25 @@ body {
     background: var(--cream);
 }
 
+/* Popup Notification */
+.popup-notification {
+    position: fixed;
+    top: 100px;
+    right: -400px;
+    background: var(--primary-orange);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    z-index: 9999;
+    transition: right 0.3s ease;
+}
+
+.popup-notification.show {
+    right: 20px;
+}
+
 /* Notes & Tasks Section */
 .notes-container {
     padding: 2rem;

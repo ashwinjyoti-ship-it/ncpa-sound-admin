@@ -12,9 +12,83 @@ document.addEventListener('DOMContentLoaded', () => {
     detectIframeErrors();
 });
 
-// Open external link in new tab
+// Popup window references
+const popupWindows = {};
+
+// Open external link in popup window
 function openExternal(url) {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    // Determine site name from URL for popup management
+    let siteName = 'external';
+    if (url.includes('ncpa-sound')) siteName = 'ncpa-sound';
+    else if (url.includes('outlook')) siteName = 'outlook';
+    else if (url.includes('staggered-offs')) siteName = 'staggered-offs';
+    else if (url.includes('soundhire')) siteName = 'soundhire';
+
+    // Check if popup already exists and is open
+    if (popupWindows[siteName] && !popupWindows[siteName].closed) {
+        popupWindows[siteName].focus();
+        return;
+    }
+
+    // Calculate popup dimensions and position
+    const width = 1200;
+    const height = 800;
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+
+    // Popup window features
+    const features = [
+        `width=${width}`,
+        `height=${height}`,
+        `left=${left}`,
+        `top=${top}`,
+        'resizable=yes',
+        'scrollbars=yes',
+        'status=yes',
+        'toolbar=no',
+        'menubar=no',
+        'location=yes'
+    ].join(',');
+
+    // Open popup window
+    const popup = window.open(url, siteName, features);
+
+    if (popup) {
+        popupWindows[siteName] = popup;
+        popup.focus();
+
+        // Add visual feedback
+        showPopupNotification(siteName);
+    } else {
+        alert('Popup blocked! Please allow popups for this site.');
+    }
+}
+
+// Show notification when popup opens
+function showPopupNotification(siteName) {
+    const notification = document.createElement('div');
+    notification.className = 'popup-notification';
+    notification.textContent = `✓ ${formatSiteName(siteName)} opened in popup window`;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function formatSiteName(name) {
+    const names = {
+        'ncpa-sound': 'NCPA Sound',
+        'outlook': 'Outlook Mail',
+        'staggered-offs': 'Staggered Offs',
+        'soundhire': 'SoundHire Quotes'
+    };
+    return names[name] || name;
 }
 
 // Detect iframe loading errors

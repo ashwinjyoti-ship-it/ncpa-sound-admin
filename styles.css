@@ -186,6 +186,90 @@ body {
     border: none;
 }
 
+/* External Link Cards */
+.external-link-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cream);
+}
+
+.external-link-card {
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px var(--shadow);
+    text-align: center;
+    max-width: 500px;
+    border: 2px solid var(--border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.external-link-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 48px var(--shadow);
+}
+
+.external-link-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.external-link-card h2 {
+    color: var(--primary-orange);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.external-link-card p {
+    color: var(--text-light);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.btn-open-external {
+    padding: 1rem 2.5rem;
+    background: var(--primary-orange);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.btn-open-external:hover {
+    background: var(--dark-orange);
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px var(--shadow);
+}
+
+.external-note {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: var(--cream);
+    border-radius: 8px;
+}
+
+.external-note small {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.iframe-error {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cream);
+}
+
 /* Notes & Tasks Section */
 .notes-container {
     padding: 2rem;

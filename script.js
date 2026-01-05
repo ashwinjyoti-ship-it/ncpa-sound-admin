@@ -9,7 +9,64 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSearch();
     initializeTheme();
     initializeKeyboardShortcuts();
+    detectIframeErrors();
 });
+
+// Open external link in new tab
+function openExternal(url) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+// Detect iframe loading errors
+function detectIframeErrors() {
+    // Check Staggered Offs iframe
+    const staggeredIframe = document.getElementById('staggered-iframe');
+    const staggeredError = document.getElementById('staggered-error');
+
+    if (staggeredIframe) {
+        staggeredIframe.addEventListener('error', () => {
+            staggeredIframe.style.display = 'none';
+            staggeredError.style.display = 'flex';
+        });
+
+        // Check if iframe is blocked by X-Frame-Options
+        setTimeout(() => {
+            try {
+                const iframeDoc = staggeredIframe.contentDocument || staggeredIframe.contentWindow.document;
+                if (!iframeDoc) {
+                    staggeredIframe.style.display = 'none';
+                    staggeredError.style.display = 'flex';
+                }
+            } catch (e) {
+                // Cross-origin error - iframe might still work, so don't hide it
+                console.log('Cross-origin iframe detected for Staggered Offs');
+            }
+        }, 3000);
+    }
+
+    // Check SoundHire Quotes iframe
+    const soundhireIframe = document.getElementById('soundhire-iframe');
+    const soundhireError = document.getElementById('soundhire-error');
+
+    if (soundhireIframe) {
+        soundhireIframe.addEventListener('error', () => {
+            soundhireIframe.style.display = 'none';
+            soundhireError.style.display = 'flex';
+        });
+
+        setTimeout(() => {
+            try {
+                const iframeDoc = soundhireIframe.contentDocument || soundhireIframe.contentWindow.document;
+                if (!iframeDoc) {
+                    soundhireIframe.style.display = 'none';
+                    soundhireError.style.display = 'flex';
+                }
+            } catch (e) {
+                console.log('Cross-origin iframe detected for SoundHire Quotes');
+            }
+        }, 3000);
+    }
+}
 
 // Tab Functionality
 function initializeTabs() {

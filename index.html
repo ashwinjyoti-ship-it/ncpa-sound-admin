@@ -40,22 +40,66 @@
         <main class="content">
             <!-- NCPA Sound Tab -->
             <div class="tab-content active" id="ncpa-sound">
-                <iframe src="https://ncpa-sound.pages.dev/" frameborder="0" class="iframe-content"></iframe>
+                <div class="external-link-container" data-url="https://ncpa-sound.pages.dev/">
+                    <div class="external-link-card">
+                        <div class="external-link-icon">🎵</div>
+                        <h2>NCPA Sound</h2>
+                        <p>Main admin site for NCPA Sound</p>
+                        <button class="btn-open-external" onclick="openExternal('https://ncpa-sound.pages.dev/')">
+                            Open NCPA Sound →
+                        </button>
+                        <div class="external-note">
+                            <small>💡 Opens in a new tab (login restrictions prevent embedding)</small>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Staggered Offs Tab -->
             <div class="tab-content" id="staggered-offs">
-                <iframe src="https://staggered-offs.replit.app/" frameborder="0" class="iframe-content"></iframe>
+                <iframe src="https://staggered-offs.replit.app/" frameborder="0" class="iframe-content" id="staggered-iframe"></iframe>
+                <div class="iframe-error" id="staggered-error" style="display: none;">
+                    <div class="external-link-card">
+                        <div class="external-link-icon">📅</div>
+                        <h2>Staggered Offs</h2>
+                        <p>Schedule management system</p>
+                        <button class="btn-open-external" onclick="openExternal('https://staggered-offs.replit.app/')">
+                            Open Staggered Offs →
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- SoundHire Quotes Tab -->
             <div class="tab-content" id="soundhire-quotes">
-                <iframe src="https://soundhire-quotes.pages.dev/" frameborder="0" class="iframe-content"></iframe>
+                <iframe src="https://soundhire-quotes.pages.dev/" frameborder="0" class="iframe-content" id="soundhire-iframe"></iframe>
+                <div class="iframe-error" id="soundhire-error" style="display: none;">
+                    <div class="external-link-card">
+                        <div class="external-link-icon">💼</div>
+                        <h2>SoundHire Quotes</h2>
+                        <p>Quotes and invoicing system</p>
+                        <button class="btn-open-external" onclick="openExternal('https://soundhire-quotes.pages.dev/')">
+                            Open SoundHire Quotes →
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- Outlook Mail Tab -->
             <div class="tab-content" id="outlook">
-                <iframe src="https://outlook.office.com/mail/" frameborder="0" class="iframe-content"></iframe>
+                <div class="external-link-container" data-url="https://outlook.office.com/mail/">
+                    <div class="external-link-card">
+                        <div class="external-link-icon">📧</div>
+                        <h2>Outlook Mail</h2>
+                        <p>Your email inbox and calendar</p>
+                        <button class="btn-open-external" onclick="openExternal('https://outlook.office.com/mail/')">
+                            Open Outlook Mail →
+                        </button>
+                        <div class="external-note">
+                            <small>💡 Opens in a new tab (Microsoft security policy prevents embedding)</small>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Notes & Tasks Tab -->

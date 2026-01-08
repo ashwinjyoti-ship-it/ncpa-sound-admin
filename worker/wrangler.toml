@@ -6,7 +6,7 @@ compatibility_date = "2024-01-01"
 [[d1_databases]]
 binding = "DB"
 database_name = "ncpa-notes"
-database_id = "" # This will be filled after creating the database
+database_id = "1966b0e8-c79c-4b04-b404-53bb4c11f30e"
 
 # CORS settings
 [env.production]

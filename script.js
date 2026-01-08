@@ -3,9 +3,8 @@ let notes = [];
 let currentEditIndex = -1;
 
 // API Configuration
-// TODO: Replace with your Cloudflare Worker URL after deployment
-const API_URL = 'YOUR_WORKER_URL_HERE'; // e.g., 'https://ncpa-notes-api.your-subdomain.workers.dev'
-const USE_API = API_URL !== 'YOUR_WORKER_URL_HERE'; // Automatically enable API when configured
+const API_URL = 'https://ncpa-notes-api.ashwinjyoti.workers.dev';
+const USE_API = true; // Cloud sync enabled!
 
 // Load notes from localStorage on page load
 document.addEventListener('DOMContentLoaded', () => {

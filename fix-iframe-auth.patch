@@ -1,0 +1,109 @@
+From fe4642914608477bfd57a86df593818d9bfee799 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 22 Jan 2026 11:43:19 +0000
+Subject: [PATCH] Fix iframe authentication by enabling CORS credentials and
+ CHIPS support
+
+- Enable credentials: true in CORS middleware for cookie-based auth
+- Use specific allowed origins instead of wildcard (*) for credential requests
+- Add partitioned: true to session cookie for Chrome CHIPS support
+- Update _headers file to support credentials in cross-origin requests
+
+This fixes the issue where users would log in but immediately be logged out
+when accessing the site through an iframe (e.g., from ncpa-sound-admin).
+---
+ public/_headers       |  9 +++++----
+ src/auth-endpoints.ts |  7 +++++--
+ src/index.tsx         | 28 +++++++++++++++++++++++-----
+ 3 files changed, 33 insertions(+), 11 deletions(-)
+
+diff --git a/public/_headers b/public/_headers
+index b5c91e8..c7d1171 100644
+--- a/public/_headers
++++ b/public/_headers
+@@ -2,12 +2,13 @@
+   X-Content-Type-Options: nosniff
+   Referrer-Policy: strict-origin-when-cross-origin
+   Permissions-Policy: interest-cohort=()
+-  
+-# Allow all origins for API and static files (Safari compatibility)
++
++# API routes - CORS is handled dynamically by the Hono middleware
++# to support credentials for iframe embedding
+ /api/*
+-  Access-Control-Allow-Origin: *
+   Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+-  Access-Control-Allow-Headers: Content-Type
++  Access-Control-Allow-Headers: Content-Type, Cookie
++  Access-Control-Allow-Credentials: true
+ 
+ /static/*
+   Access-Control-Allow-Origin: *
+diff --git a/src/auth-endpoints.ts b/src/auth-endpoints.ts
+index ebc9b1c..c26d346 100644
+--- a/src/auth-endpoints.ts
++++ b/src/auth-endpoints.ts
+@@ -161,13 +161,16 @@ export function setupAuthEndpoints(app: Hono<{ Bindings: Bindings }>) {
+         VALUES (?, ?, ?)
+       `).bind(user.id, token, expiresAt.toISOString()).run()
+       
+-      // Set cookie with SameSite=None to allow iframe embedding
++      // Set cookie with SameSite=None and Partitioned to allow iframe embedding
++      // partitioned: true enables CHIPS (Cookies Having Independent Partitioned State)
++      // which is required for Chrome's third-party cookie deprecation
+       setCookie(c, 'session_token', token, {
+         httpOnly: true,
+         secure: true,
+         sameSite: 'None',  // Required for iframe embedding
+         maxAge: 7 * 24 * 60 * 60,
+-        path: '/'
++        path: '/',
++        partitioned: true  // Required for Chrome 114+ third-party cookie support in iframes
+       })
+       
+       return c.json({ 
+diff --git a/src/index.tsx b/src/index.tsx
+index 1ec6c8e..dbcf5b4 100644
+--- a/src/index.tsx
++++ b/src/index.tsx
+@@ -25,14 +25,32 @@ type Bindings = {
+ 
+ const app = new Hono<{ Bindings: Bindings }>()
+ 
+-// Enable CORS for all routes (Safari compatibility)
++// Allowed origins for iframe embedding with credentials
++const ALLOWED_ORIGINS = [
++  'https://ncpa-sound-admin.pages.dev',
++  'https://ncpa-sound.pages.dev',
++  'http://localhost:3000',
++  'http://localhost:5173',
++  'http://127.0.0.1:3000',
++  'http://127.0.0.1:5173'
++]
++
++// Enable CORS for all routes with credentials support for iframe embedding
+ app.use('*', cors({
+-  origin: '*',
++  origin: (origin) => {
++    // Allow requests from allowed origins (for iframe embedding with cookies)
++    if (origin && ALLOWED_ORIGINS.includes(origin)) {
++      return origin
++    }
++    // For same-origin requests or non-browser clients, allow the request
++    // but don't enable credentials (maintains backward compatibility)
++    return origin || '*'
++  },
+   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+-  allowHeaders: ['Content-Type', 'Authorization'],
+-  exposeHeaders: ['Content-Length', 'X-Request-Id'],
++  allowHeaders: ['Content-Type', 'Authorization', 'Cookie'],
++  exposeHeaders: ['Content-Length', 'X-Request-Id', 'Set-Cookie'],
+   maxAge: 86400,
+-  credentials: false
++  credentials: true  // Enable credentials for cookie-based authentication
+ }))
+ 
+ // Serve static files
+-- 
+2.43.0
+

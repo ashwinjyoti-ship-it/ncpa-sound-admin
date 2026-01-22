@@ -19,6 +19,48 @@ document.addEventListener('DOMContentLoaded', () => {
 // Popup window references
 const popupWindows = {};
 
+// Open NCPA Sound in popup window (avoids iframe cookie issues)
+function openNCPASound() {
+    const url = 'https://ncpa-sound.pages.dev/';
+    const siteName = 'ncpa-sound';
+
+    // Check if popup already exists and is open
+    if (popupWindows[siteName] && !popupWindows[siteName].closed) {
+        popupWindows[siteName].focus();
+        return;
+    }
+
+    // Calculate popup dimensions - larger for NCPA Sound
+    const width = Math.min(1400, screen.width - 100);
+    const height = Math.min(900, screen.height - 100);
+    const left = (screen.width - width) / 2;
+    const top = (screen.height - height) / 2;
+
+    const features = [
+        `width=${width}`,
+        `height=${height}`,
+        `left=${left}`,
+        `top=${top}`,
+        'resizable=yes',
+        'scrollbars=yes',
+        'status=yes',
+        'toolbar=no',
+        'menubar=no',
+        'location=yes'
+    ].join(',');
+
+    const popup = window.open(url, siteName, features);
+
+    if (popup) {
+        popupWindows[siteName] = popup;
+        popup.focus();
+        showPopupNotification(siteName);
+    } else {
+        // Fallback to new tab if popup is blocked
+        window.open(url, '_blank');
+    }
+}
+
 // Open external link in popup window
 function openExternal(url) {
     // Determine site name from URL for popup management
@@ -97,28 +139,7 @@ function formatSiteName(name) {
 
 // Detect iframe loading errors
 function detectIframeErrors() {
-    // Check NCPA Sound iframe
-    const ncpaIframe = document.getElementById('ncpa-sound-iframe');
-    const ncpaError = document.getElementById('ncpa-sound-error');
-
-    if (ncpaIframe) {
-        ncpaIframe.addEventListener('error', () => {
-            ncpaIframe.style.display = 'none';
-            ncpaError.style.display = 'flex';
-        });
-
-        setTimeout(() => {
-            try {
-                const iframeDoc = ncpaIframe.contentDocument || ncpaIframe.contentWindow.document;
-                if (!iframeDoc) {
-                    ncpaIframe.style.display = 'none';
-                    ncpaError.style.display = 'flex';
-                }
-            } catch (e) {
-                console.log('Cross-origin iframe detected for NCPA Sound');
-            }
-        }, 3000);
-    }
+    // Note: NCPA Sound no longer uses iframe - opens in popup to avoid cookie issues
 
     // Check Staggered Offs iframe
     const staggeredIframe = document.getElementById('staggered-iframe');
